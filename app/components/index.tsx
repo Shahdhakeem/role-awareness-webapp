@@ -338,6 +338,15 @@ const TextGeneration = () => {
   }
 
   useEffect(() => {
+    const handler = (e: any) => {
+      const text = e?.detail?.text
+      if (text) send(text)
+    }
+    window.addEventListener('WELCOME_SEND', handler)
+    return () => window.removeEventListener('WELCOME_SEND', handler)
+  }, []) // send is stable or comes from a hook; otherwise include it in deps
+
+  // ... the rest of your component (render chat UI)
     if (!hasSetAppConfig) {
       setAppUnavailable(true)
       return
@@ -567,3 +576,9 @@ const TextGeneration = () => {
 }
 
 export default TextGeneration
+
+export default function Main(/* props */) {
+
+  const send = async (text: string) => {
+    // your existing send logic (call to Dify API)
+  }
