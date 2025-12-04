@@ -1,11 +1,13 @@
 import React from 'react'
-
+import Welcome from '@/app/components/Welcome';
 import Main from '@/app/components'
 
 const App = () => {
   return (
-    <Main />
+    <>
+      <Welcome />
+      <Main />
+    </>
   )
-}
 
 export default React.memo(App)
