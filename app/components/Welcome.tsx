@@ -43,11 +43,11 @@ export default function Welcome() {
         </button>
 
         <button
-          onClick={() => sendPrompt('Compare Chapter Lead vs TDM (Scrum Master).')}
+          onClick={() => sendPrompt('Compare Chapter Lead vs TDM')}
           style={btn}
           aria-label="CL vs TDM"
         >
-          CL vs TDM (Scrum Master)
+          CL vs TDM 
         </button>
 
         <button
