@@ -341,24 +341,32 @@ const TextGeneration = () => {
   /* =========================
      Welcome quick-prompt bridge
      ========================= */
-  useEffect(() => {
-    const handler = (e: any) => {
-      const text = e?.detail?.text
-      if (!text) return
+useEffect(() => {
+  function onWelcomeSend(e: any) {
+    const text = e?.detail?.text || ''
+    if (!text) return
 
-      // Put the text into the FIRST prompt variable, then trigger send
-      const firstKey = promptConfig?.prompt_variables?.[0]?.key
-      if (!firstKey) return
+    // Prefer the 'query' field if it exists, otherwise fall back to the first prompt variable
+    const hasQuery = promptConfig?.prompt_variables?.some(v => v.key === 'query')
+    const fallbackKey = promptConfig?.prompt_variables?.[0]?.key
+    const key = hasQuery ? 'query' : (fallbackKey || 'query')
 
-      setInputs(prev => ({ ...prev, [firstKey]: text }))
-      // Let state update, then fire
-      setTimeout(() => { handleSend() }, 0)
-    }
+    // 1) write incoming text to the input
+    setInputs(prev => ({ ...prev, [key]: text }))
 
-    window.addEventListener('WELCOME_SEND', handler)
-    return () => window.removeEventListener('WELCOME_SEND', handler)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [promptConfig]) // depends on prompt structure only
+    // 2) reset any batch state and open the result panel
+    setIsCallBatchAPI(false)
+    setAllTaskList([])
+    showResSidebar()
+
+    // 3) trigger a normal single run
+    setTimeout(() => { handleSend() }, 0)
+  }
+
+  window.addEventListener('WELCOME_SEND', onWelcomeSend)
+  return () => window.removeEventListener('WELCOME_SEND', onWelcomeSend)
+  // depends on prompt shape only
+}, [promptConfig])
 
   /* =========================
      App bootstrap (fetch params)
